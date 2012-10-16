@@ -7,7 +7,7 @@ var username;
 
 function isLogin()
 {
-	if(Cookie.read("cdb_uid"))
+	if(Cookie.read("cdb_uid") > 0)
 	{
 		return true;
 	}
@@ -32,6 +32,8 @@ function init()
 	$('bwl_form_new').addEvent('submit', function(e){addNew(e);});
 	$('bwl_add').addEvent('click', function(){showAddNew();});
 	$('bwl_delete').addEvent('click', function(){delRow();});
+	$('bwl_download').addEvent('click', function(){downloadText();});
+	$('bwl_logout').addEvent('click', function(){userLogout();});
 
 	$("bwl_main").setStyle("display", "block");
 	$("bwl_new").setStyle("display", "none");
@@ -67,6 +69,16 @@ function userLogin(e)
 	sendRequest(params);
 }
 
+function userLogout()
+{
+	var params = "type=logout";
+	sendRequest(params);
+	Cookie.write("cdb_uid", "-1", {domain:"", path:"/"});
+	Cookie.dispose("uchome_loginuser");
+	showLogin();
+	//window.location.href = "logout.htm";
+}
+
 function addNew(e)
 {
 	e.stop();	//防止刷新页面
@@ -91,7 +103,7 @@ function addWord(word, comment)
 
 	if(isLogin())	//用户已经登录
 	{
-		var params = "word=" + word + "&comment=" + comment + "&type=insert";
+		var params = "word=" + word + "&comment=" + encodeChar(comment) + "&type=insert";
 		sendRequest(params);
 	}
 	else
@@ -227,7 +239,7 @@ function saveComment(cell)	//更新备注
 	var text = cell.getElement("textarea");
 	var div = cell.getElement("div");
 	var id = text.id.split("_")[2];
-	var comment = encodeURIComponent(text.value);
+	var comment = encodeChar(encodeURIComponent(text.value));
 	var params = "id=" + id + "&comment=" + comment + "&type=update";
 	var strDisplay = text.value.replace(/[\r\n]+/g, " ");
 	if(strDisplay != "")
@@ -355,12 +367,26 @@ function test()
 	$("bwl_login").setStyle("display", "block");
 }
 
-function selectalllist()
+function encodeChar(str)
 {
-   for(var i=0;i<document.bwl_form_tbl.elements.length;i++)
-   {
-    var p = document.bwl_form_tbl.elements[i];
-    if (p.name == 'delete_list')
-       p.checked = document.getElementById('controlall').checked;
-   }
+	return str.replace(/'/g, "''");
+}
+
+function selectAllList()
+{
+	bwl.getElements("input").each
+	(
+		function(e, index)
+		{
+			if (e.name == "delete_list")
+			{
+				e.checked = $('control_all').checked;
+			}
+		}
+	);
+}
+
+function downloadText()
+{
+	window.location.href = "download.php";
 }
