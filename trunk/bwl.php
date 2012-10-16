@@ -53,6 +53,10 @@ function main()
 				}
 				break;
 
+			case "logout":	//退出
+				logout();
+				break;
+
 			case "query":	//查询
 				$data = sqlQuery();
 				break;
@@ -115,7 +119,7 @@ function login()
 
 		if(!$member)
 		{
-			throw new Exception('您需要需要激活该帐号，请进入论坛激活。');
+			throw new Exception('您需要激活该帐号，请进入论坛激活。');
 			exit;
 		}
 
@@ -137,7 +141,14 @@ function login()
 	}
 }
 
-
+function logout()
+{
+	uc_user_synlogout();
+	clearcookies();
+	$groupid = 7;
+	$discuz_uid = 0;
+	$discuz_user = $discuz_pw = '';
+}
 
 function getTotalPage($uid)
 {
@@ -166,7 +177,7 @@ function sqlQuery()
 		$sql = "SELECT	id,
 					bwcy as word,
 					DATE_FORMAT(bwsj, '%y/%c/%e') as adddate,
-					bwbz as comment,
+					REPLACE(bwbz, '\"', '\\\\\"') as comment,
 					userid
 				FROM	zdic_bwl
 				WHERE	userid = '$uid' ORDER BY	bwsj DESC
