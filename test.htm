@@ -1,0 +1,27 @@
+﻿﻿<HTML><HEAD>
+<TITLE>测试</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=utf-8">
+<meta name=vs_showGrid content="True"><meta name=vs_defaultClientScript content="JavaScript">
+<script language="javascript" type="text/javascript" src="mootools-1.2.1-core-nc.js"></script>
+<script language="javascript" type="text/javascript" src="mootools-1.2-more.js"></script>
+<meta name=vs_targetSchema content="HTML 4.0">
+
+
+
+</HEAD>
+<BODY>
+<div id="bwl_main">
+	<div id="bwl_user">欢迎您</div>
+	<div id="bwl_display">
+		<div style="height:15;border:1px solid gray">a<div>备注1</div></div>
+		<div style="height:15;border:1px solid gray">b<div>备注2</div></div>
+		<div style="height:15;border:1px solid gray">c<div>备注3</div></div>
+	</div>
+</div>
+
+<div id="bwl_login">
+	用户名：<input type="text" name="username" />
+	密码：<input type="password" name="password" />
+	<button onclick="test()">登录</button>
+</div>
+<div id="bwl_debug"><div>a<div>备注1</div></div><div>b<div>备注2</div></div><div>c<div>备注3</div></div></div><script language="javascript" type="text/javascript">var mySort = new Sortables($('bwl_display'), {	clone: true,	opacity: 0.6,	onComplete: function(){		mySort.serialize()	}});</script></BODY></HTML>
