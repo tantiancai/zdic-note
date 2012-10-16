@@ -1,17 +1,18 @@
 <?php
-require_once '../include/common.inc.php';
-require_once DISCUZ_ROOT.'./uc_client/client.php';
-
-include("mysql2json.class.php");
+define('DB_CHARSET',                   'latin1');   //编码
+include './MySql.php';
+require_once '../config/config_global.php';
+require_once '../config/config_ucenter.php';
+require_once '../uc_client/client.php';
 
 //获取用户登录信息
-if(!empty($_DCOOKIE['auth']))
+if(!empty($_COOKIE['auth']))
 {
-	list( , , $uid) = explode("\t", authcode($_DCOOKIE['auth'], 'DECODE'));
+	list( , , $uid) = explode("\t", uc_authcode($_COOKIE[$config['cookiepre'].'auth'], 'DECODE'));
 }
-else if(!empty($_DCOOKIE['uid']))
+else if(!empty($_COOKIE['uid']))
 {
-	$uid = $_DCOOKIE['uid'];
+	$uid = $_COOKIE['uid'];
 }
 else
 {
@@ -29,11 +30,22 @@ $type = isset($_REQUEST["type"]) ? $_REQUEST["type"] : "";
 $totalpage;
 $rows = 20;	//每页数据数目
 $errormessage;
+$db = new MySql($_config['db']['1']['dbhost'], $_config['db']['1']['dbuser'], $_config['db']['1']['dbpw'], $_config['db']['1']['dbname']);
+
+//返回结果类
+class MsgReturn
+{
+    var $status = '';               //状态
+    var $errormessage = '';         //提示信息内容
+    var $page = -1;              	//页码
+    var $totalpage = -1;			//总页数
+    var $data;						//数据
+}
 
 function main()
 {
 	$err = "";
-	$data;
+	$msg = new MsgReturn();
 	try
 	{
 		switch($GLOBALS['type'])
@@ -45,7 +57,7 @@ function main()
 					{
 						sqlInsert();	//插入
 					}
-					$data = sqlQuery();	//查询
+					$msg->data = sqlQuery();	//查询
 				}
 				else
 				{
@@ -58,12 +70,12 @@ function main()
 				break;
 
 			case "query":	//查询
-				$data = sqlQuery();
+				$msg->data = sqlQuery();
 				break;
 
 			case "insert":	//插入
 				sqlInsert();	//插入
-				$data = sqlQuery();		//查询
+				$msg->data = sqlQuery();		//查询
 				break;
 
 			case "update":	//更新
@@ -72,7 +84,7 @@ function main()
 
 			case "delete":	//删除
 				sqlDelete();	//删除
-				$data = sqlQuery();		//查询
+				$msg->data = sqlQuery();		//查询
 				break;
 		}
 	}
@@ -83,55 +95,34 @@ function main()
 
 	if($err == "")
 	{
-		$status = '"status" : "OK"';
+		$msg->status = 'OK';
 	}
 	else
 	{
-		$status = '"status" : "fail"';
+		$msg->status = 'fail';
 		$GLOBALS['errormessage'] = $err;
 	}
-//	if($GLOBALS['errormessage'] == "")
-//	{
-//		$GLOBALS['errormessage'] = "查询成功。";
-//	}
-	$errormessage = '"errormessage" : "'.$GLOBALS['errormessage'].'"';
-	$page = '"page" : "'.$GLOBALS['page'].'"';
-	$totalpage = '"totalpage" : "'.$GLOBALS['totalpage'].'"';
-	if($data != "")
-	{
-		echo "{".$status.",".$errormessage.",".$page.",".$totalpage.",".$data."}";
-	}
-	else
-	{
-		echo "{".$status.",".$errormessage.",".$page.",".$totalpage."}";
-	}
+	$msg->errormessage = $GLOBALS['errormessage'];
+	$msg->page = $GLOBALS['page'];
+	$msg->totalpage = $GLOBALS['totalpage'];
+	echo json_encode($msg);
 }
 
 function login()
 {
 	list($uid, $username, $password, $email) = uc_user_login($GLOBALS['username'], $GLOBALS['password']);
-	$db = $GLOBALS['db'];
+
 	if($uid > 0)
 	{
-		$member = $db->fetch_first("SELECT m.uid AS discuz_uid, m.username AS discuz_user, m.password AS discuz_pw, m.secques AS discuz_secques
-				FROM ".$GLOBALS['tablepre']."members m
-				WHERE m.uid='$uid'");
-
-		if(!$member)
-		{
-			throw new Exception('您需要激活该帐号，请进入论坛激活。');
-			exit;
-		}
-
-		extract($member);
-
 		$cookietime = 2592000;
 		dsetcookie('cookietime', $cookietime, 31536000);
-		dsetcookie('auth', authcode("$discuz_pw\t$discuz_secques\t$discuz_uid", 'ENCODE'), $cookietime, 1, true);
-		dsetcookie('uid', $uid, $cookietime);
+		dsetcookie('auth', uc_authcode("$discuz_pw\t$discuz_secques\t$discuz_uid", 'ENCODE'), $cookietime, 1, false);
+		dsetcookie('uid', $uid, $cookietime, 0);
+		dsetcookie('uchome_loginuser', $username, $cookietime, 0);
 
 		//生成同步登录的代码
 		$ucsynlogin = uc_user_synlogin($uid);
+		//echo $ucsynlogin;
 		$GLOBALS['uid'] = $uid;
 		return true;
 	}
@@ -145,17 +136,14 @@ function logout()
 {
 	uc_user_synlogout();
 	clearcookies();
-	$groupid = 7;
-	$discuz_uid = 0;
-	$discuz_user = $discuz_pw = '';
 }
 
 function getTotalPage($uid)
 {
 	$db = $GLOBALS['db'];
 	$result = $db->query("SELECT count(*) FROM zdic_bwl WHERE userid = '$uid'");
-	$row = mysql_fetch_array($result);
-	return ceil($row[0] / $GLOBALS['rows']);
+	$row = $db->num_rows;
+	return ceil($row / $GLOBALS['rows']);
 }
 
 
@@ -183,9 +171,7 @@ function sqlQuery()
 				WHERE	userid = '$uid' ORDER BY	bwsj DESC
 				LIMIT	".($page - 1) * $GLOBALS['rows'].", ".$GLOBALS['rows'];
 		$result = $db->query($sql);
-		$num = mysql_affected_rows();
-		$objJSON = new mysql2json();
-		return ' "data" : '.$objJSON->getJSON($result, $num);
+		return $result;
 	}
 	else
 	{
@@ -215,7 +201,7 @@ function sqlInsert()
 							'".date('Y-m-d H:i:s')."',
 							'".$comment."',
 							'".$uid."')";
-				$db->query($sql);
+				$db->insert($sql);
 				$insertSuccess++;
 			}
 		}
@@ -242,9 +228,8 @@ function sqlInsert()
 function isExist($uid, $word)
 {
 	$db = $GLOBALS['db'];
-	$result = $db->query("SELECT count(*) FROM zdic_bwl WHERE userid='$uid' AND bwcy='$word'");
-	$row = mysql_fetch_array($result);
-	return ($row[0] > 0);
+	$result = $db->query("SELECT count(*) AS num FROM zdic_bwl WHERE userid='$uid' AND bwcy='$word'");
+	return ($result[0]->num > 0);
 }
 
 function sqlUpdate()
@@ -264,7 +249,7 @@ function sqlUpdate()
 					(id='".$id."'
 				OR	bwcy='".$word."')
 				AND	userid='".$uid."'";
-		$db->query($sql);
+		$db->update($sql);
 		$GLOBALS['errormessage'] = '更新成功。';
 	}
 	else
@@ -295,7 +280,7 @@ function sqlDelete()
 			$sql .= "'-1')
 					AND	userid='".$uid."'";
 			//echo $sql;
-			$db->query($sql);
+			$db->delete($sql);
 			$GLOBALS['errormessage'] = '删除成功。';
 		}
 		else
@@ -309,6 +294,37 @@ function sqlDelete()
 		throw new Exception('请登录后删除。');
 		exit;
 	}
+}
+
+function dsetcookie($var, $value = '', $life = 0, $prefix = 1, $httponly = false) {
+
+	global $_config;
+
+	$config = $_config['cookie'];
+
+	$_config['cookie'][$var] = $value;
+	$var = ($prefix ? $config['cookiepre'] : '').$var;
+	$_COOKIE[$var] = $value;
+
+	if($value == '' || $life < 0) {
+		$value = '';
+		$life = -1;
+	}
+
+	if(defined('IN_MOBILE')) {
+		$httponly = false;
+	}
+
+	$life = $life > 0 ? time() + $life : ($life < 0 ? time() - 31536000 : 0);
+	$path = $httponly && PHP_VERSION < '5.2.0' ? $config['cookiepath'].'; HttpOnly' : $config['cookiepath'];
+
+	$secure = $_SERVER['SERVER_PORT'] == 443 ? 1 : 0;
+	if(PHP_VERSION < '5.2.0') {
+		setcookie($var, $value, $life, $path, $config['cookiedomain'], $secure);
+	} else {
+		setcookie($var, $value, $life, $path, $config['cookiedomain'], $secure, $httponly);
+	}
+
 }
 
 

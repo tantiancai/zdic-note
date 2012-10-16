@@ -7,7 +7,7 @@ var username;
 
 function isLogin()
 {
-	if(Cookie.read("cdb_uid") > 0)
+	if(Cookie.read("uid"))
 	{
 		return true;
 	}
@@ -73,7 +73,7 @@ function userLogout()
 {
 	var params = "type=logout";
 	sendRequest(params);
-	Cookie.write("cdb_uid", "-1", {domain:"", path:"/"});
+	Cookie.write("uid", "-1", {domain:"", path:"/"});
 	Cookie.dispose("uchome_loginuser");
 	showLogin();
 	//window.location.href = "logout.htm";
@@ -379,10 +379,10 @@ function selectAllList()
 		function(e, index)
 		{
 			if (e.name == "delete_list")
-			{
+            {
 				e.checked = $('control_all').checked;
-			}
-		}
+            }
+        }
 	);
 }
 
