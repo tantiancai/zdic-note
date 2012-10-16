@@ -1,20 +1,25 @@
 <?php
-require_once '../include/common.inc.php';
-require_once DISCUZ_ROOT.'./uc_client/client.php';
+define('DB_CHARSET',                   'latin1');   //编码
+include './MySql.php';
+require_once '../config/config_global.php';
+require_once '../config/config_ucenter.php';
+require_once '../uc_client/client.php';
 
 //获取用户登录信息
-if(!empty($_DCOOKIE['auth']))
+if(!empty($_COOKIE['auth']))
 {
-	list( , , $uid) = explode("\t", authcode($_DCOOKIE['auth'], 'DECODE'));
+	list( , , $uid) = explode("\t", uc_authcode($_COOKIE[$config['cookiepre'].'auth'], 'DECODE'));
 }
-else if(!empty($_DCOOKIE['uid']))
+else if(!empty($_COOKIE['uid']))
 {
-	$uid = $_DCOOKIE['uid'];
+	$uid = $_COOKIE['uid'];
 }
 else
 {
 	$uid = '';
 }
+
+$db = new MySql($_config['db']['1']['dbhost'], $_config['db']['1']['dbuser'], $_config['db']['1']['dbpw'], $_config['db']['1']['dbname']);
 
 function main()
 {
@@ -24,11 +29,11 @@ function main()
 		$table = sqlQuery();
 		header("Content-type:text/plain; charset=utf-8");
 		header("Content-disposition: attachment; filename=$downloadfile");
-		while( $row = mysql_fetch_row($table) )
+		foreach($table as $row)
 		{
-			echo "词条：$row[0]\r\n";
-			echo "备注：$row[1]\r\n";
-			echo "时间：$row[2]\r\n";
+			echo "词条：$row->word\r\n";
+			echo "备注：$row->comment\r\n";
+			echo "时间：$row->adddate\r\n";
 			echo "---------------\r\n";
 		}
 	}
@@ -42,11 +47,6 @@ function sqlQuery()
 {
 	$db = $GLOBALS['db'];
 	$uid = $GLOBALS['uid'];
-
-	if(($page == "") || ($page <= 0 ))	//没指定页码或页码有误
-	{
-		$GLOBALS['page'] = $page = 1;	//显示第一页
-	}
 
 	if($uid > 0)
 	{	
