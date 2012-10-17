@@ -3,51 +3,35 @@ var url;
 var page;
 var username;
 
-//window.addEvent('domready', init);
+$(document).ready(function(){
+	bwl = $('bwl_tbl');
+	url = 'bwl.php';
+	username = $.cookie('uchome_loginuser');
 
-function isLogin()
-{
-	if(Cookie.read("uid"))
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-function init()
-{
-	bwl = $("bwl_tbl");
-	url = "bwl.php";
-	username = Cookie.read("uchome_loginuser");
-	
 	if(username)
 	{
-		$("bwl_user").set("text", "欢迎您 " + username);
+		$("bwl_user").text('欢迎您 ' + username);
 	}
 
-	$('bwl_form_login').addEvent('submit', function(e){userLogin(e);});
-	$('bwl_form_new').addEvent('submit', function(e){addNew(e);});
-	$('bwl_add').addEvent('click', function(){showAddNew();});
-	$('bwl_delete').addEvent('click', function(){delRow();});
-	$('bwl_download').addEvent('click', function(){downloadText();});
-	$('bwl_logout').addEvent('click', function(){userLogout();});
+	$('bwl_form_login').submit(function(){
+		var params = $("bwl_form_login").toQueryString();
+		$("bwl_main").show();
+		$("bwl_login").hide();
+		$("bwl_user").text('欢迎您 ' + $('txtUsername').val());
+		
+		//sendRequest(params);
+	});
+	$('bwl_form_new').bind('submit', function(e){addNew(e);});
+	$('bwl_add').bind('click', function(){showAddNew();});
+	$('bwl_delete').bind('click', function(){delRow();});
+	$('bwl_download').bind('click', function(){downloadText();});
+	$('bwl_logout').bind('click', function(){userLogout();});
 
-	$("bwl_main").setStyle("display", "block");
-	$("bwl_new").setStyle("display", "none");
-	$("bwl_login").setStyle("display", "none");
+	$("bwl_main").show();
+	$("bwl_new").hide();
+	$("bwl_login").hide();
 	
-	var word;
-	if(location.search.split("=").length < 2)
-	{
-		word = "";
-	}
-	else
-	{
-		word = decodeURIComponent(location.search.split("#")[0].split("=")[1]);
-	}
+	var word = window.decodeURIComponent(location.hash.split("=")[1]);
 
 	if(word != "")
 	{
@@ -57,24 +41,33 @@ function init()
 	{
 		showBwl();	//显示界面
 	}
+
+});
+
+function isLogin()
+{
+	if($.cookie("uid"))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 function userLogin(e)
 {
 	e.stop();	//防止刷新页面
-	var params = $("bwl_form_login").toQueryString();
-	$("bwl_main").setStyle("display", "block");
-	$("bwl_login").setStyle("display", "none");
-	$("bwl_user").set("text", "欢迎您 " + $("bwl_form_login").getElement("input[name=username]").get("value"));
-	sendRequest(params);
+	
 }
 
 function userLogout()
 {
 	var params = "type=logout";
 	sendRequest(params);
-	Cookie.write("uid", "-1", {domain:"", path:"/"});
-	Cookie.dispose("uchome_loginuser");
+	$.removeCookie("uid");
+	$.removeCookie("uchome_loginuser");
 	showLogin();
 	//window.location.href = "logout.htm";
 }
@@ -133,21 +126,21 @@ function showBwl(page)
 
 function sendRequest(params)
 {
-	var req = new Request
-	(
-		{
-			url: url,
-			onSuccess: function(txt){showPannel(txt);},
-			onFailure: function(txt){$('bwl_debug').set("html", 'The request failed.' + txt);}
+	$.ajax({
+		type: 'POST',
+		url: url,
+		data: params,
+		success: function(txt){showPannel(txt);},
+		error: function(XMLHttpRequest){
+			$('bwl_debug').html('The request failed.' + XMLHttpRequest.responseText);
 		}
-	);
-	req.send(params);
+	});
 }
 
 function showLogin(word, comment, page)
 {
-	$("bwl_main").setStyle("display", "none");
-	$("bwl_login").setStyle("display", "block");
+	$("bwl_main").hide();
+	$("bwl_login").show();
 	
 	var form = $("bwl_form_login");
 	if(typeof(word) != "undefined")
@@ -314,7 +307,7 @@ function setEvents()
 		bwl.getElements("dl").each(
 			function(e, index)
 			{
-				e.addEvent("mouseover", function(){bwl.getElements("dl").removeClass("over");this.addClass("over")});
+				e.bind("mouseover", function(){bwl.getElements("dl").removeClass("over");this.addClass("over")});
 				if(index == 0)
 				{
 					e.addClass("over");	//初始化，选中第一行
@@ -326,12 +319,12 @@ function setEvents()
 				
 				var divCommentGroup = e.getElement("div").getElement("div");
 				var divComment = divCommentGroup.getElement("div");
-				divComment.addEvent("click", function(){showCommentText(divCommentGroup)});
+				divComment.bind("click", function(){showCommentText(divCommentGroup)});
 				divComment.addClass("bz");
 				
 				var text = divCommentGroup.getElement("textarea");
 				text.setStyle("display", "none");
-				text.addEvent("blur", function(){saveComment(divCommentGroup)});
+				text.bind("blur", function(){saveComment(divCommentGroup)});
 
 			}
 		);

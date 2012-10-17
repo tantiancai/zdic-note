@@ -1,15 +1,17 @@
-﻿﻿<HTML>
-<HEAD>
-<TITLE>汉典备忘录</TITLE>
-<META http-equiv=Content-Type content="text/html; charset=utf-8">
-<meta name=vs_targetSchema content="HTML 4.0">
+﻿<!DOCTYPE HTML>
+﻿<html>
+<head>
+<title>汉典备忘录</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta charset="utf-8">
 <link rel="stylesheet" rev="stylesheet" href="bwl.css" type="text/css" media="all" />
 <link rel="stylesheet" rev="stylesheet" href="login.css" type="text/css" media="all" />
-<script type="text/javascript" src="mootools-1.2.1-core-nc.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+<script type="text/javascript" src="jquery.cookie.js"></script>
 <script type="text/javascript" src="bwl.js"></script>
-</HEAD>
+</head>
 
-<BODY>
+<body>
 <div id="bwl_main">
 	<div id="bwl_user">欢迎您 </div>
 	<div id="bwl_debug"></div>
@@ -35,26 +37,29 @@
 </div>
 
 
-<DIV id=bwl_login>
-<DIV id=Heading>
-汉典登录
-<form id="bwl_form_login">
-<LABEL class=MyLabel>用户名</LABEL>
-<input class=Textbox type="text" name="username" />
-<LABEL class=MyLabel>密码</LABEL>
-<input class=Textbox type="password" name="password" />
-<DIV><input class=Button type="submit" value="登录" />&nbsp;&nbsp;<A href="http://bbs.zdic.net" target="_blank">汉典论坛</A> </DIV>
-<DIV><A href="http://bbs.zdic.net/zregister.php" target="_blank">新用户注册</A>   <A href="mailto:zdic.net@gmail.com" target="_blank">联系管理员</A> </DIV>
-<input type="hidden" name="word" />
-<input type="hidden" name="comment" />
-<input type="hidden" name="page" />
-<input type="hidden" name="type" value="login" />
-<BR style="CLEAR: both">
+<div id="bwl_login">
+  <div id="heading">
+    汉典登录
+    <form id="bwl_form_login">
+      <label class="mylabel" for="txtUsername">用户名</label>
+      <input class="textbox" id="txtUsername" type="text" name="username" />
+      <label class="mylabel" for="txtPassword">密码</label>
+      <input class="textbox" id="txtPassword" type="password" name="password" />
+      <div>
+        <input class="button" type="submit" value="登录" />&nbsp;
+        <a href="http://bbs.zdic.net" target="_blank">汉典论坛</a>
+      </div>
+      <div>
+        <a href="http://bbs.zdic.net/zregister.php" target="_blank">新用户注册</a>
+        <a href="mailto:zdic.net@gmail.com" target="_blank">联系管理员</a>
+      </div>
+      <input type="hidden" name="word" />
+      <input type="hidden" name="comment" />
+      <input type="hidden" name="page" />
+      <input type="hidden" name="type" value="login" />
+      <br style="clear: both">
 </form>
-</DIV>
+</div>
 
-<script language="javascript" type="text/javascript">
-init();
-</script>
-</BODY>
-</HTML>
+</body>
+</html>
