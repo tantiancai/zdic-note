@@ -31,7 +31,7 @@ $(document).ready(function(){
 	$("bwl_new").hide();
 	$("bwl_login").hide();
 	
-	var word = window.decodeURIComponent(location.hash.split("=")[1]);
+	var word = window.decodeURIComponent(window.location.hash.split("=")[1]);
 
 	if(word != "")
 	{
@@ -46,14 +46,7 @@ $(document).ready(function(){
 
 function isLogin()
 {
-	if($.cookie("uid"))
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	return $.cookie("uid") ? true : false;
 }
 
 function userLogin(e)
@@ -160,12 +153,18 @@ function showLogin(word, comment, page)
 function showPannel(txt)
 {
 	var row;
-	bwls = JSON.decode(txt, true);
-	if(bwls == null)	//错误处理
+	try
 	{
-		$('bwl_debug').set("html", txt);
+		bwls = $.parseJSON(txt);
 	}
-	else if(bwls.status == "OK")
+	catch(e)
+	{
+		//错误处理
+		$('bwl_debug').html(txt);
+		return;
+	}
+	
+	if(bwls.status == "OK")
 	{
 		if(bwls.data)
 		{
@@ -254,6 +253,10 @@ function createRow(id, word, comment, date)	//添加行
 {
 	if(bwl)	//备忘录有效时
 	{
+		var strHTML = '<ul>';
+		strHTML += '<li>';
+		strHTML += '</li>';
+		strHTML += '</ul>';
 		var dl = new Element("dl");
 		var dd = new Element("dd");
 		var strong = new Element("strong");
@@ -302,7 +305,7 @@ function createRow(id, word, comment, date)	//添加行
 
 function setEvents()
 {
-	if(bwl && bwl.get("html") != "")
+	if(bwl && bwl.(html) != "")
 	{
 		bwl.getElements("dl").each(
 			function(e, index)
