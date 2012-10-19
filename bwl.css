@@ -2,33 +2,33 @@
 .wrapper{ position:absolute; width:100%; background:#fff; padding:5px;}
 			
 /*平常的状态*/
-ul{ clear:both; margin:0;padding:5px 0 0 0;height:16px;border-bottom:#705a5b 1px dotted;}
-	ul li{}
-		ul li span{ float:left; margin-right:5px;padding:0;}
-		ul li div{ float:left; width:85%; list-style-type:none;line-height:16px;}
-			ul li div h4{ clear:both; font-weight:normal}
-				ul li div h4 a{ float:left; color:#000000; font-size:12px; font-weight:normal; text-decoration:none;}
-				ul li div h4 a:hover{ color:#f00; text-decoration:underline;}
-				ul li div h4 span{ float:right; width:80px;}
-			ul li div div {display:none;}
-			ul li div div div {display:none;}
+dl{ clear:both; margin:0;padding:5px 0 0 0;height:16px;border-bottom:#705a5b 1px dotted;}
+	dl dd{}
+		dl dd span{ float:left; margin-right:5px;padding:0;}
+		dl dd div{ float:left; width:85%; list-style-type:none;line-height:16px;}
+			dl dd div h4{ clear:both; font-weight:normal}
+				dl dd div h4 a{ float:left; color:#000000; font-size:12px; font-weight:normal; text-decoration:none;}
+				dl dd div h4 a:hover{ color:#f00; text-decoration:underline;}
+				dl dd div h4 span{ float:right; width:80px;}
+			dl dd div div {display:none;}
+			dl dd div div div {display:none;}
 			            
 				
 /*鼠标划过的状态*/				
-ul.over{ clear:both; height:55px; background:#e1d6d0; padding:5px;border-bottom:#705a5b 1px dotted;}
-	ul.over li{}
-		ul.over li span{ float:left;font-size:14px; color:#de520d; vertical-align:top;font-weight:bold;}
-		ul.over li div{ float:left; width:85%; list-style-type:none;}
-			ul.over li div h4{ clear:both; font-weight:normal}
-				ul.over li div h4 a{ float:left; color:#5b2a1c; font-size:12px; font-weight:bold; text-decoration:none;}
-				ul.over li div h4 a:hover{ color:#f00; text-decoration:underline;}
-				ul.over li div h4 span{ float:right;}
-				ul.over li div div {clear:both; display:block;text-align:left;}
-				ul.over li div div div {clear:both; display:block;text-align:left;}
-				ul.over li div div textarea {clear:both; display:block;text-align:left;width:100%;height:40px;max-width:300px;}
+dl.over{ clear:both; height:55px; background:#e1d6d0; padding:5px;border-bottom:#705a5b 1px dotted;}
+	dl.over li{}
+		dl.over dd span{ float:left;font-size:14px; color:#de520d; vertical-align:top;font-weight:bold;}
+		dl.over dd div{ float:left; width:85%; list-style-type:none;}
+			dl.over dd div h4{ clear:both; font-weight:normal}
+				dl.over dd div h4 a{ float:left; color:#5b2a1c; font-size:12px; font-weight:bold; text-decoration:none;}
+				dl.over dd div h4 a:hover{ color:#f00; text-decoration:underline;}
+				dl.over dd div h4 span{ float:right;}
+				dl.over dd div div {clear:both; display:block;text-align:left;}
+				dl.over dd div div div {clear:both; display:block;text-align:left;}
+				dl.over dd div div textarea {clear:both; display:block;text-align:left;width:100%;height:40px;max-width:300px;}
 
 
-#bwl_ali {display:none;}
+#bwl_add {display:none;}
 #bwl_main {
 text-align:center;
 padding:5px;

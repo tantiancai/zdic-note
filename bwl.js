@@ -1,11 +1,8 @@
-var bwl;
-var url;
+var url = 'bwl.php';
 var page;
 var username;
 
 $(document).ready(function(){
-	bwl = $('bwl_tbl');
-	url = 'bwl.php';
 	username = $.cookie('uchome_loginuser');
 
 	if(username)
@@ -47,12 +44,6 @@ $(document).ready(function(){
 function isLogin()
 {
 	return $.cookie("uid") ? true : false;
-}
-
-function userLogin(e)
-{
-	e.stop();	//防止刷新页面
-	
 }
 
 function userLogout()
@@ -187,21 +178,18 @@ function showPannel(txt)
 			$("bwl_login").setStyle("display", "block");
 		}
 	}
-	$('bwl_debug').set("html", bwls.errormessage);
+	$('bwl_debug').html(bwls.errormessage);
 }
 
 function clearTable()
 {
-	if(bwl)
-	{
-		bwl.getChildren().dispose();
-	}
+	$('bwl_tbl').empty();
 }
 
 function setPage(page, totalpage)
 {
 	var div = $("bwl_page");
-	var str = new Array;
+	var str = [];
 	for(var i = 1; i <= totalpage; i++)
 	{
 		if(page == i)
@@ -213,7 +201,7 @@ function setPage(page, totalpage)
 			str.push("<a href='#' onclick='showBwl(" + i + ")'>" + i + "</a>");
 		}
 	}
-	div.set("html", str.join(" "));
+	$("bwl_page").html(str.join(" "));
 }
 
 function showCommentText(cell)	//显示文本框
@@ -251,87 +239,44 @@ function saveComment(cell)	//更新备注
 
 function createRow(id, word, comment, date)	//添加行
 {
-	if(bwl)	//备忘录有效时
-	{
-		var strHTML = '<ul>';
-		strHTML += '<li>';
-		strHTML += '</li>';
-		strHTML += '</ul>';
-		var dl = new Element("dl");
-		var dd = new Element("dd");
-		var strong = new Element("strong");
-		strong.set("html", "·");
+	var strHTML = '<dl>';
+	strHTML += '<dd>';
+	strHTML += '  <span class="strong">·</span>';
+	strHTML += '  <div><h4>';
+	strHTML += '	<a href="http://www.zdic.net/search/?q=' + window.encodeURIComponent(word) + '" target="_blank">' + word + '</a>';
+	strHTML += '	<span>';
+	strHTML += date + '<input type="checkbox" id="bwl_chk_' + id + '" name="delete_list" />';
+	strHTML += '	</span>';
+	strHTML += '  </h4></div>';
+	strHTML += '  <div>';
+	strHTML += '    <div class="bz" id="bwl_text_' + id + '">' + comment + '</div>';
+	strHTML += '  </div>';
+	strHTML += '</dd>';
+	strHTML += '</dl>';
 
-		var divContent = new Element("div");
-		var h4 = new Element("h4");
-		var a = new Element("a");
-		a.set("text", word);
-		
-		var span = new Element("span");
-		span.set("html", date);
-		var chk = new Element("input");
-		chk.set("type", "checkbox").set("id", "bwl_chk_" + id);
-		chk.set("type", "checkbox").set("name", "delete_list");
-
-		var divCommentGroup = new Element("div");
-		var divComment = new Element("div");
-		var strDisplay = comment.replace(/[\r\n]+/g, " ");
-		if(strDisplay != "")
-		{
-			divComment.set("text", strDisplay.trim());
-		}
-		else
-		{
-			divComment.set("html", "点此输入备注");
-		}
-
-		var text = new Element("textarea");
-		text.set("id", "bwl_text_" + id).set("value", comment);
-		
-		dd.inject(dl);	//将dd放入dl中
-		strong.inject(dd);
-		divContent.inject(dd);
-		h4.inject(divContent);
-		a.inject(h4);
-		span.inject(h4);
-		chk.inject(span);
-		divCommentGroup.inject(divContent);
-		divComment.inject(divCommentGroup);
-		text.inject(divCommentGroup);
-		
-		dl.inject(bwl);
-	}
+	$('bwl_tbl').append(strHTML);
 }
 
 function setEvents()
 {
-	if(bwl && bwl.(html) != "")
-	{
-		bwl.getElements("dl").each(
-			function(e, index)
-			{
-				e.bind("mouseover", function(){bwl.getElements("dl").removeClass("over");this.addClass("over")});
-				if(index == 0)
-				{
-					e.addClass("over");	//初始化，选中第一行
-				}
-				
-				var a = e.getElement("a");
-				a.set("href", "http://www.zdic.net/search/?q=" + encodeURIComponent(a.get("text")));
-				a.set("target", "_blank");
-				
-				var divCommentGroup = e.getElement("div").getElement("div");
-				var divComment = divCommentGroup.getElement("div");
-				divComment.bind("click", function(){showCommentText(divCommentGroup)});
-				divComment.addClass("bz");
-				
-				var text = divCommentGroup.getElement("textarea");
-				text.setStyle("display", "none");
-				text.bind("blur", function(){saveComment(divCommentGroup)});
-
-			}
-		);
-	}
+	$('bwl_table dl').each(function(index){
+		$(this).mouseover(function(){
+			$('bwl_table dl').removeClass('over');
+			$(this).addClass('over');
+		});
+		if(index == 0){
+			$(this).addClass('over');
+		}
+	});
+	//正文区域
+	$('bwl_table dl dd div div div.bz').each(function(index){
+		$(this).click(function(){
+			//改为可编辑状态
+		});
+		$(this).blur(function(){
+			//改为显示状态，并提交数据
+		});
+	});
 }
 
 function delRow()	//删除行
