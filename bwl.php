@@ -57,7 +57,8 @@ function main()
 					{
 						sqlInsert();	//插入
 					}
-					$msg->data = sqlQuery();	//查询
+					//$msg->data = sqlQuery();	//查询
+					return;
 				}
 				else
 				{
@@ -122,7 +123,25 @@ function login()
 
 		//生成同步登录的代码
 		$ucsynlogin = uc_user_synlogin($uid);
-		//echo $ucsynlogin;
+		$strHTML = '<!DOCTYPE html>
+		<html>
+		<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8">
+		<meta charset="utf-8">
+		<title>正在登录</title>
+		'.$ucsynlogin.'
+		<script type="text/javascript">
+			window.onload = function(){
+				window.location.href = "index.htm";
+			}
+		</script>
+		</head>
+		<body>
+			登录完成正在跳转。如果无法自动跳转，请访问点击如下链接：<br />
+			<a href="index.htm">index.htm</a>
+		</body>
+		</html>';
+		echo $strHTML;
 		$GLOBALS['uid'] = $uid;
 		return true;
 	}

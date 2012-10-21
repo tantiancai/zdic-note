@@ -7,30 +7,29 @@ $(document).ready(function(){
 
 	if(username)
 	{
-		$("bwl_user").text('欢迎您 ' + username);
+		$('bwl_user').text('欢迎您 ' + username);
 	}
 
-	$('bwl_form_login').submit(function(){
-		var params = $("bwl_form_login").toQueryString();
-		$("bwl_main").show();
-		$("bwl_login").hide();
-		$("bwl_user").text('欢迎您 ' + $('txtUsername').val());
-		
-		//sendRequest(params);
+	$('bwl_form_new').bind('submit', function(){
+		$('bwl_new').hide();
+		var form = $('bwl_form_new');
+		var word = $('bwl_form_new input[name=bwl_word]').val();
+		var comment = $('bwl_form_new input[name=bwl_comment]').val();
+		addWord(word, comment);
+		return false;
 	});
-	$('bwl_form_new').bind('submit', function(e){addNew(e);});
 	$('bwl_add').bind('click', function(){showAddNew();});
 	$('bwl_delete').bind('click', function(){delRow();});
 	$('bwl_download').bind('click', function(){downloadText();});
 	$('bwl_logout').bind('click', function(){userLogout();});
 
-	$("bwl_main").show();
-	$("bwl_new").hide();
-	$("bwl_login").hide();
+	$('bwl_main').show();
+	$('bwl_new').hide();
+	$('bwl_login').hide();
 	
-	var word = window.decodeURIComponent(window.location.hash.split("=")[1]);
+	var word = window.decodeURIComponent(window.location.search.split('=')[1]);
 
-	if(word != "")
+	if(word != '')
 	{
 		addWord(word);	//添加生词
 	}
@@ -43,44 +42,34 @@ $(document).ready(function(){
 
 function isLogin()
 {
-	return $.cookie("uid") ? true : false;
+	return $.cookie('uid') ? true : false;
 }
 
 function userLogout()
 {
-	var params = "type=logout";
+	var params = 'type=logout';
 	sendRequest(params);
-	$.removeCookie("uid");
-	$.removeCookie("uchome_loginuser");
+	$.removeCookie('uid');
+	$.removeCookie('uchome_loginuser');
 	showLogin();
-	//window.location.href = "logout.htm";
-}
-
-function addNew(e)
-{
-	e.stop();	//防止刷新页面
-	$("bwl_new").setStyle("display", "none");
-	var form = $("bwl_form_new");
-	var word = form.getElement("input[name=bwl_word]").get("value");
-	var comment = form.getElement("textarea[name=bwl_comment]").get("value");
-	addWord(word, comment);
+	//window.location.href = 'logout.htm';
 }
 
 function showAddNew()
 {
-	$("bwl_new").setStyle("display", "block");
+	$('bwl_new').setStyle('display', 'block');
 }
 
 function addWord(word, comment)
 {
 	if(comment == undefined)
 	{
-		comment = "";
+		comment = '';
 	}
 
 	if(isLogin())	//用户已经登录
 	{
-		var params = "word=" + word + "&comment=" + encodeChar(comment) + "&type=insert";
+		var params = 'word=' + word + '&comment=' + encodeChar(comment) + '&type=insert';
 		sendRequest(params);
 	}
 	else
@@ -93,18 +82,18 @@ function showBwl(page)
 {
 	if(isLogin())	//用户已经登录
 	{
-		var params = "";
+		var params = '';
 		if(page >= 1)
 		{
-			params += "page=" + page + "&";
+			params += 'page=' + page + '&';
 		}
 
-		params += "type=query";
+		params += 'type=query';
 		sendRequest(params);
 	}
 	else
 	{
-		showLogin("", "", page);
+		showLogin('', '', page);
 	}
 }
 
@@ -123,21 +112,21 @@ function sendRequest(params)
 
 function showLogin(word, comment, page)
 {
-	$("bwl_main").hide();
-	$("bwl_login").show();
+	$('bwl_main').hide();
+	$('bwl_login').show();
 	
-	var form = $("bwl_form_login");
-	if(typeof(word) != "undefined")
+	var form = $('bwl_form_login');
+	if(typeof(word) != 'undefined')
 	{
-		form.getElement("input[name=word]").set("value", word);
+		form.getElement('input[name=word]').set('value', word);
 	}
-	if(typeof(comment) != "undefined")
+	if(typeof(comment) != 'undefined')
 	{
-		form.getElement("input[name=comment]").set("value", comment);
+		form.getElement('input[name=comment]').set('value', comment);
 	}
-	if(typeof(page) != "undefined")
+	if(typeof(page) != 'undefined')
 	{
-		form.getElement("input[name=page]").set("value", page);
+		form.getElement('input[name=page]').set('value', page);
 	}
 }
 
@@ -155,7 +144,7 @@ function showPannel(txt)
 		return;
 	}
 	
-	if(bwls.status == "OK")
+	if(bwls.status == 'OK')
 	{
 		if(bwls.data)
 		{
@@ -172,10 +161,10 @@ function showPannel(txt)
 	}
 	else
 	{
-		if(bwls.errormessage.indexOf("登录") >= 0)	//登录失败
+		if(bwls.errormessage.indexOf('登录') >= 0)	//登录失败
 		{
-			$("bwl_main").setStyle("display", "none");
-			$("bwl_login").setStyle("display", "block");
+			$('bwl_main').setStyle('display', 'none');
+			$('bwl_login').setStyle('display', 'block');
 		}
 	}
 	$('bwl_debug').html(bwls.errormessage);
@@ -188,50 +177,50 @@ function clearTable()
 
 function setPage(page, totalpage)
 {
-	var div = $("bwl_page");
+	var div = $('bwl_page');
 	var str = [];
 	for(var i = 1; i <= totalpage; i++)
 	{
 		if(page == i)
 		{
-			str.push("<span class='current'>"+ i +"</span>");
+			str.push('<span class="current">'+ i +'</span>');
 		}
 		else
 		{
-			str.push("<a href='#' onclick='showBwl(" + i + ")'>" + i + "</a>");
+			str.push('<a href="#" onclick="showBwl(' + i + ')">' + i + '</a>');
 		}
 	}
-	$("bwl_page").html(str.join(" "));
+	$('bwl_page').html(str.join(' '));
 }
 
 function showCommentText(cell)	//显示文本框
 {
 //debugger;
-	var text = cell.getElement("textarea");
-	var div = cell.getElement("div");
-	div.setStyle("display", "none");
-	text.setStyle("display", "block");
+	var text = cell.getElement('textarea');
+	var div = cell.getElement('div');
+	div.setStyle('display', 'none');
+	text.setStyle('display', 'block');
 	text.focus();
 }
 
 function saveComment(cell)	//更新备注
 {
-	var text = cell.getElement("textarea");
-	var div = cell.getElement("div");
-	var id = text.id.split("_")[2];
+	var text = cell.getElement('textarea');
+	var div = cell.getElement('div');
+	var id = text.id.split('_')[2];
 	var comment = encodeChar(encodeURIComponent(text.value));
-	var params = "id=" + id + "&comment=" + comment + "&type=update";
-	var strDisplay = text.value.replace(/[\r\n]+/g, " ");
-	if(strDisplay != "")
+	var params = 'id=' + id + '&comment=' + comment + '&type=update';
+	var strDisplay = text.value.replace(/[\r\n]+/g, ' ');
+	if(strDisplay != '')
 	{
-		div.set("text", strDisplay.trim());
+		div.set('text', strDisplay.trim());
 	}
 	else
 	{
-		div.set("html", "点此输入备注");
+		div.set('html', '点此输入备注');
 	}
-	text.setStyle("display", "none");
-	div.setStyle("display", "block");
+	text.setStyle('display', 'none');
+	div.setStyle('display', 'block');
 	sendRequest(params);
 }
 
@@ -284,18 +273,18 @@ function delRow()	//删除行
 	var chks;
 	var id = new Array();
 	var params;
-	chks = bwl.getElements("input[checked]").get("id");
+	chks = bwl.getElements('input[checked]').get('id');
 	for(var i = 0; i < chks.length; i++)
 	{
-		id.push(chks[i].split("_")[2]);
+		id.push(chks[i].split('_')[2]);
 	}
 	if(page > 0)
 	{
-		params = "id=" + id.join("|") + "&page=" + page + "&type=delete";
+		params = 'id=' + id.join('|') + '&page=' + page + '&type=delete';
 	}
 	else
 	{
-		params = "id=" + id.join("|") + "&page=1&type=delete";
+		params = 'id=' + id.join('|') + '&page=1&type=delete';
 	}
 
 	sendRequest(params);
@@ -303,23 +292,23 @@ function delRow()	//删除行
 
 function test()
 {
-	$("bwl_main").setStyle("display", "block");
-	$("bwl_new").setStyle("display", "block");
-	$("bwl_login").setStyle("display", "block");
+	$('bwl_main').setStyle('display', 'block');
+	$('bwl_new').setStyle('display', 'block');
+	$('bwl_login').setStyle('display', 'block');
 }
 
 function encodeChar(str)
 {
-	return str.replace(/'/g, "''");
+	return str.replace(/'/g, '""');
 }
 
 function selectAllList()
 {
-	bwl.getElements("input").each
+	bwl.getElements('input').each
 	(
 		function(e, index)
 		{
-			if (e.name == "delete_list")
+			if (e.name == 'delete_list')
             {
 				e.checked = $('control_all').checked;
             }
@@ -329,5 +318,5 @@ function selectAllList()
 
 function downloadText()
 {
-	window.location.href = "download.php";
+	window.location.href = 'download.php';
 }
