@@ -23,19 +23,19 @@ $(document).ready(function(){
 	$('bwl_download').bind('click', function(){downloadText();});
 	$('bwl_logout').bind('click', function(){userLogout();});
 
-	$('bwl_main').show();
+	$('bwl_main').hide();
 	$('bwl_new').hide();
 	$('bwl_login').hide();
 	
 	var word = window.decodeURIComponent(window.location.search.split('=')[1]);
 
-	if(word != '')
+	if(word != 'undefined' && word != '')
 	{
 		addWord(word);	//添加生词
 	}
 	else
 	{
-		showBwl();	//显示界面
+	//	showBwl();	//显示界面
 	}
 
 });
@@ -57,7 +57,7 @@ function userLogout()
 
 function showAddNew()
 {
-	$('bwl_new').setStyle('display', 'block');
+	$('bwl_new').show();
 }
 
 function addWord(word, comment)
@@ -83,7 +83,7 @@ function showBwl(page)
 	if(isLogin())	//用户已经登录
 	{
 		var params = '';
-		if(page >= 1)
+		if(page && page >= 1)
 		{
 			params += 'page=' + page + '&';
 		}
@@ -158,13 +158,15 @@ function showPannel(txt)
 			setPage(bwls.page, bwls.totalpage);	//设置页码
 			page = bwls.page;
 		}
+		$('bwl_login').hide();
+		$('bwl_main').show();
 	}
 	else
 	{
 		if(bwls.errormessage.indexOf('登录') >= 0)	//登录失败
 		{
-			$('bwl_main').setStyle('display', 'none');
-			$('bwl_login').setStyle('display', 'block');
+			$('bwl_main').hide();
+			$('bwl_login').show();
 		}
 	}
 	$('bwl_debug').html(bwls.errormessage);
