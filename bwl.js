@@ -7,25 +7,25 @@ $(document).ready(function(){
 
 	if(username)
 	{
-		$('bwl_user').text('欢迎您 ' + username);
+		$('#bwl_user').text('欢迎您 ' + username);
 	}
 
-	$('bwl_form_new').bind('submit', function(){
-		$('bwl_new').hide();
-		var form = $('bwl_form_new');
-		var word = $('bwl_form_new input[name=bwl_word]').val();
-		var comment = $('bwl_form_new input[name=bwl_comment]').val();
+	$('#bwl_form_new').bind('submit', function(){
+		$('#bwl_new').hide();
+		var form = $('#bwl_form_new');
+		var word = $('#bwl_form_new input[name=bwl_word]').val();
+		var comment = $('#bwl_form_new input[name=bwl_comment]').val();
 		addWord(word, comment);
 		return false;
 	});
-	$('bwl_add').bind('click', function(){showAddNew();});
-	$('bwl_delete').bind('click', function(){delRow();});
-	$('bwl_download').bind('click', function(){downloadText();});
-	$('bwl_logout').bind('click', function(){userLogout();});
+	$('#bwl_add').bind('click', function(){showAddNew();});
+	$('#bwl_delete').bind('click', function(){delRow();});
+	$('#bwl_download').bind('click', function(){downloadText();});
+	$('#bwl_logout').bind('click', function(){userLogout();});
 
-	$('bwl_main').hide();
-	$('bwl_new').hide();
-	$('bwl_login').hide();
+	$('#bwl_main').hide();
+	$('#bwl_new').hide();
+	$('#bwl_login').show();
 	
 	var word = window.decodeURIComponent(window.location.search.split('=')[1]);
 
@@ -35,7 +35,7 @@ $(document).ready(function(){
 	}
 	else
 	{
-	//	showBwl();	//显示界面
+		showBwl();	//显示界面
 	}
 
 });
@@ -57,7 +57,7 @@ function userLogout()
 
 function showAddNew()
 {
-	$('bwl_new').show();
+	$('#bwl_new').show();
 }
 
 function addWord(word, comment)
@@ -105,17 +105,17 @@ function sendRequest(params)
 		data: params,
 		success: function(txt){showPannel(txt);},
 		error: function(XMLHttpRequest){
-			$('bwl_debug').html('The request failed.' + XMLHttpRequest.responseText);
+			$('#bwl_debug').html('The request failed.' + XMLHttpRequest.responseText);
 		}
 	});
 }
 
 function showLogin(word, comment, page)
 {
-	$('bwl_main').hide();
-	$('bwl_login').show();
+	$('#bwl_main').hide();
+	$('#bwl_login').show();
 	
-	var form = $('bwl_form_login');
+	var form = $('#bwl_form_login');
 	if(typeof(word) != 'undefined')
 	{
 		form.getElement('input[name=word]').set('value', word);
@@ -140,7 +140,7 @@ function showPannel(txt)
 	catch(e)
 	{
 		//错误处理
-		$('bwl_debug').html(txt);
+		$('#bwl_debug').html(txt);
 		return;
 	}
 	
@@ -158,28 +158,28 @@ function showPannel(txt)
 			setPage(bwls.page, bwls.totalpage);	//设置页码
 			page = bwls.page;
 		}
-		$('bwl_login').hide();
-		$('bwl_main').show();
+		$('#bwl_login').hide();
+		$('#bwl_main').show();
 	}
 	else
 	{
 		if(bwls.errormessage.indexOf('登录') >= 0)	//登录失败
 		{
-			$('bwl_main').hide();
-			$('bwl_login').show();
+			$('#bwl_main').hide();
+			$('#bwl_login').show();
 		}
 	}
-	$('bwl_debug').html(bwls.errormessage);
+	$('#bwl_debug').html(bwls.errormessage);
 }
 
 function clearTable()
 {
-	$('bwl_tbl').empty();
+	$('#bwl_tbl').empty();
 }
 
 function setPage(page, totalpage)
 {
-	var div = $('bwl_page');
+	var div = $('#bwl_page');
 	var str = [];
 	for(var i = 1; i <= totalpage; i++)
 	{
@@ -192,7 +192,7 @@ function setPage(page, totalpage)
 			str.push('<a href="#" onclick="showBwl(' + i + ')">' + i + '</a>');
 		}
 	}
-	$('bwl_page').html(str.join(' '));
+	$('#bwl_page').html(str.join(' '));
 }
 
 function showCommentText(cell)	//显示文本框
@@ -245,14 +245,14 @@ function createRow(id, word, comment, date)	//添加行
 	strHTML += '</dd>';
 	strHTML += '</dl>';
 
-	$('bwl_tbl').append(strHTML);
+	$('#bwl_tbl').append(strHTML);
 }
 
 function setEvents()
 {
-	$('bwl_table dl').each(function(index){
+	$('#bwl_table dl').each(function(index){
 		$(this).mouseover(function(){
-			$('bwl_table dl').removeClass('over');
+			$('#bwl_table dl').removeClass('over');
 			$(this).addClass('over');
 		});
 		if(index == 0){
@@ -260,7 +260,7 @@ function setEvents()
 		}
 	});
 	//正文区域
-	$('bwl_table dl dd div div div.bz').each(function(index){
+	$('#bwl_table dl dd div div div.bz').each(function(index){
 		$(this).click(function(){
 			//改为可编辑状态
 		});
@@ -294,9 +294,9 @@ function delRow()	//删除行
 
 function test()
 {
-	$('bwl_main').setStyle('display', 'block');
-	$('bwl_new').setStyle('display', 'block');
-	$('bwl_login').setStyle('display', 'block');
+	$('#bwl_main').setStyle('display', 'block');
+	$('#bwl_new').setStyle('display', 'block');
+	$('#bwl_login').setStyle('display', 'block');
 }
 
 function encodeChar(str)
@@ -312,7 +312,7 @@ function selectAllList()
 		{
 			if (e.name == 'delete_list')
             {
-				e.checked = $('control_all').checked;
+				e.checked = $('#control_all').checked;
             }
         }
 	);
