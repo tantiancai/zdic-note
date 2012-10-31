@@ -23,11 +23,17 @@ dl.over{ clear:both; height:55px; background:#e1d6d0; padding:5px;border-bottom:
 				dl.over dd div h4 a{ float:left; color:#5b2a1c; font-size:12px; font-weight:bold; text-decoration:none;}
 				dl.over dd div h4 a:hover{ color:#f00; text-decoration:underline;}
 				dl.over dd div h4 span{ float:right;}
-				dl.over dd div div {clear:both; display:block;text-align:left;}
-				dl.over dd div div div {clear:both; display:block;text-align:left;}
-				dl.over dd div div textarea {clear:both; display:block;text-align:left;width:100%;height:40px;max-width:300px;}
+				dl.over dd div div {clear:both; display:block;text-align:left;width:100%;}
 
+/* 可编辑状态 */
+.editable{
+	border-style: inset;
+}
 
+/* 不可编辑状态 */
+.diseditable{
+	border-style: solid;
+}
 #bwl_add {display:none;}
 #bwl_main {
 text-align:center;
