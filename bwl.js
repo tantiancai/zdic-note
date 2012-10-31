@@ -174,7 +174,7 @@ function showPannel(txt)
 
 function clearTable()
 {
-	$('#bwl_tbl').empty();
+	$('#bwl_table').empty();
 }
 
 function setPage(page, totalpage)
@@ -245,7 +245,7 @@ function createRow(id, word, comment, date)	//添加行
 	strHTML += '</dd>';
 	strHTML += '</dl>';
 
-	$('#bwl_tbl').append(strHTML);
+	$('#bwl_table').append(strHTML);
 }
 
 function setEvents()
@@ -260,12 +260,16 @@ function setEvents()
 		}
 	});
 	//正文区域
-	$('#bwl_table dl dd div div div.bz').each(function(index){
+	$('#bwl_table dl dd div div.bz').each(function(index){
 		$(this).click(function(){
-			//改为可编辑状态
+			//设置为可编辑
+			$(this).attr('contenteditable', 'true');
+			$(this).addClass('editable');
 		});
 		$(this).blur(function(){
 			//改为显示状态，并提交数据
+			$(this).attr('contenteditable', 'false');
+			$(this).removeClass('editable');
 		});
 	});
 }
