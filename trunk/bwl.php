@@ -6,7 +6,7 @@ require_once '../config/config_ucenter.php';
 require_once '../uc_client/client.php';
 
 //获取用户登录信息
-if(!empty($_COOKIE['auth']))
+if(!empty($_COOKIE[$config['cookiepre'].'auth']))
 {
 	list( , , $uid) = explode("\t", uc_authcode($_COOKIE[$config['cookiepre'].'auth'], 'DECODE'));
 }
@@ -87,6 +87,8 @@ function main()
 				sqlDelete();	//删除
 				$msg->data = sqlQuery();		//查询
 				break;
+			default:
+				$err = 'type错误：'.$GLOBALS['type'];
 		}
 	}
 	catch(Exception $e)
@@ -112,7 +114,6 @@ function main()
 function login()
 {
 	list($uid, $username, $password, $email) = uc_user_login($GLOBALS['username'], $GLOBALS['password']);
-
 	if($uid > 0)
 	{
 		$cookietime = 2592000;
@@ -128,6 +129,7 @@ function login()
 		<head>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8">
 		<meta charset="utf-8">
+		<meta http-equiv="refresh" content="5; url=index.htm" />
 		<title>正在登录</title>
 		'.$ucsynlogin.'
 		<script type="text/javascript">
@@ -137,7 +139,7 @@ function login()
 		</script>
 		</head>
 		<body>
-			登录完成正在跳转。如果无法自动跳转，请访问点击如下链接：<br />
+			登录完成，正在跳转。如果无法自动跳转，请点击如下链接：<br />
 			<a href="index.htm">index.htm</a>
 		</body>
 		</html>';
@@ -153,8 +155,30 @@ function login()
 
 function logout()
 {
+
 	uc_user_synlogout();
-	clearcookies();
+	dsetcookie('auth', '', -1, 1, false);
+	dsetcookie('uid', '', -1, 0, false);
+	dsetcookie('uchome_loginuser', '', -1, 0, false);
+	$strHTML = '<!DOCTYPE html>
+	<html>
+	<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<meta charset="utf-8">
+	<meta http-equiv="refresh" content="5; url=index.htm" />
+	<title>正在退出</title>
+	<script type="text/javascript">
+		window.onload = function(){
+			window.location.href = "index.htm";
+		}
+	</script>
+	</head>
+	<body>
+		退出成功，正在跳转。如果无法自动跳转，请点击如下链接：<br />
+		<a href="index.htm">index.htm</a>
+	</body>
+	</html>';
+	echo $strHTML;
 }
 
 function getTotalPage($uid)
@@ -350,7 +374,9 @@ function dsetcookie($var, $value = '', $life = 0, $prefix = 1, $httponly = false
 //echo date('Y-m-d H:i:s');
 main();
 
+
 function test()
 {
+	echo $GLOBALS['type'];
 }
 ?>
