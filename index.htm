@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-﻿<html>
+<html>
 <head>
 <title>汉典备忘录</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
@@ -16,11 +16,14 @@
 	<div id="bwl_user">欢迎您 </div>
 	<div id="bwl_debug"></div>
 	<div id="bwl_tools">
-		<button id="bwl_add">增加词条</button>
-		<input type="checkbox" id="control_all" onClick="selectAllList()"><span>全选</span>&nbsp;
-		<button id="bwl_delete">删除</button>
-		<button id="bwl_download">导出</button>
-		<button id="bwl_logout">退出</button>
+		<form id="bwl_form_logout" method="post" action="bwl.php">
+			<button id="bwl_add">增加词条</button>
+			<input type="checkbox" id="control_all" onClick="selectAllList()"><span>全选</span>&nbsp;
+			<button id="bwl_delete">删除</button>
+			<button id="bwl_download">导出</button>
+			<input class="button" type="submit" value="退出" />
+			<input type="hidden" name="type" value="logout" />
+		</form>
 	</div>
 	<div id="bwl_new">
 		<form id="bwl_form_new">

@@ -1,13 +1,11 @@
 var url = 'bwl.php';
 var page;
-var username;
 
 $(document).ready(function(){
-	username = $.cookie('uchome_loginuser');
-
-	if(username)
+	if(isLogin())
 	{
-		$('#bwl_user').text('欢迎您 ' + username);
+		$('#bwl_user').text('欢迎您 ' + $.cookie('uchome_loginuser'));
+		showBwl();	//显示界面
 	}
 
 	$('#bwl_form_new').bind('submit', function(){
@@ -33,16 +31,12 @@ $(document).ready(function(){
 	{
 		addWord(word);	//添加生词
 	}
-	else
-	{
-		showBwl();	//显示界面
-	}
 
 });
 
 function isLogin()
 {
-	return $.cookie('uid') ? true : false;
+	return ($.cookie('uid')) ? true : false;
 }
 
 function userLogout()
@@ -51,8 +45,8 @@ function userLogout()
 	sendRequest(params);
 	$.removeCookie('uid');
 	$.removeCookie('uchome_loginuser');
-	showLogin();
-	//window.location.href = 'logout.htm';
+	//$.cookie('bwl_login', false);
+	//showLogin();
 }
 
 function showAddNew()
@@ -82,6 +76,10 @@ function showBwl(page)
 {
 	if(isLogin())	//用户已经登录
 	{
+		var username = $.cookie('uchome_loginuser');
+		if(username){
+			$('#bwl_user').text('欢迎您 ' + username);
+		}
 		var params = '';
 		if(page && page >= 1)
 		{
