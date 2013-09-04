@@ -184,8 +184,8 @@ function logout()
 function getTotalPage($uid)
 {
 	$db = $GLOBALS['db'];
-	$result = $db->query("SELECT count(*) FROM zdic_bwl WHERE userid = '$uid'");
-	$row = $db->num_rows;
+	$result = $db->query("SELECT count(*) AS rows FROM zdic_bwl WHERE userid = '$uid'");
+	$row = $result[0]->rows;
 	return ceil($row / $GLOBALS['rows']);
 }
 
