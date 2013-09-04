@@ -1,28 +1,24 @@
-﻿<!DOCTYPE html>
-<html>
-<head>
-<title>汉典备忘录</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8">
-<meta charset="utf-8">
+﻿﻿<HTML>
+<HEAD>
+<TITLE>汉典备忘录</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=utf-8">
+<meta name=vs_targetSchema content="HTML 4.0">
 <link rel="stylesheet" rev="stylesheet" href="bwl.css" type="text/css" media="all" />
-<script type="text/javascript" src="jquery.min.js"></script>
-<script type="text/javascript" src="jquery.cookie.js"></script>
+<link rel="stylesheet" rev="stylesheet" href="login.css" type="text/css" media="all" />
+<script type="text/javascript" src="mootools-1.2.1-core-nc.js"></script>
 <script type="text/javascript" src="bwl.js"></script>
-</head>
+</HEAD>
 
-<body>
+<BODY>
 <div id="bwl_main">
 	<div id="bwl_user">欢迎您 </div>
 	<div id="bwl_debug"></div>
 	<div id="bwl_tools">
-		<form id="bwl_form_logout" method="post" action="bwl.php">
-			<button id="bwl_add">增加词条</button>
-			<input type="checkbox" id="control_all" onClick="selectAllList()"><span>全选</span>&nbsp;
-			<button id="bwl_delete">删除</button>
-			<button id="bwl_download">导出</button>
-			<input class="button" type="submit" value="退出" />
-			<input type="hidden" name="type" value="logout" />
-		</form>
+		<button id="bwl_add">增加词条</button>
+		<input type="checkbox" id="control_all" onClick="selectAllList()"><span>全选</span>&nbsp;
+		<button id="bwl_delete">删除</button>
+		<button id="bwl_download">导出</button>
+		<button id="bwl_logout">退出</button>
 	</div>
 	<div id="bwl_new">
 		<form id="bwl_form_new">
@@ -33,50 +29,32 @@
 		</form>
 	</div>
 	<div id="bwl_display">
-		<div id="bwl_table">
-		<!--
-		<dl>
-			<dd>
-				<span class="strong">·</span>
-				<div>
-					<h4>
-						<a href="http://www.zdic.net/search/?q=%C3%A7%C2%A0%E2%80%9A" target="_blank">ç&nbsp;‚</a>	<span>11/3/7<input type="checkbox" id="bwl_chk_117065" name="delete_list">	</span>
-					</h4>
-				</div>
-				<div>
-					<div class="bz" id="bwl_text_117065">'*d'''''</div>
-		  		</div>
-		  	</dd>
-		</dl>
-		-->
-		</div>
+		<div id="bwl_tbl"></div>
 		<div id="bwl_page"></div>
 	</div>
 </div>
 
 
-<div id="bwl_login">
-  <div id="heading">
-    汉典登录
-    <form id="bwl_form_login" method="post" action="bwl.php">
-      <label class="mylabel" for="txtUsername">用户名</label>
-      <input class="textbox" id="txtUsername" type="text" name="username" /><br/ >
-      <label class="mylabel" for="txtPassword">密码</label>
-      <input class="textbox" id="txtPassword" type="password" name="password" />
-      <div>
-        <input class="button" type="submit" value="登录" />&nbsp;
-        <a href="http://bbs.zdic.net" target="_blank">汉典论坛</a>
-      </div>
-      <div>
-        <a href="http://bbs.zdic.net/zregister.php" target="_blank">新用户注册</a>
-        <a href="mailto:zdic.net@gmail.com" target="_blank">联系管理员</a>
-      </div>
-      <input type="hidden" name="word" />
-      <input type="hidden" name="comment" />
-      <input type="hidden" name="page" />
-      <input type="hidden" name="type" value="login" />
+<DIV id=bwl_login>
+<DIV id=Heading>
+汉典登录
+<form id="bwl_form_login">
+<LABEL class=MyLabel>用户名</LABEL>
+<input class=Textbox type="text" name="username" />
+<LABEL class=MyLabel>密码</LABEL>
+<input class=Textbox type="password" name="password" />
+<DIV><input class=Button type="submit" value="登录" />&nbsp;&nbsp;<A href="http://bbs.zdic.net" target="_blank">汉典论坛</A> </DIV>
+<DIV><A href="http://bbs.zdic.net/zregister.php" target="_blank">新用户注册</A>   <A href="mailto:zdic.net@gmail.com" target="_blank">联系管理员</A> </DIV>
+<input type="hidden" name="word" />
+<input type="hidden" name="comment" />
+<input type="hidden" name="page" />
+<input type="hidden" name="type" value="login" />
+<BR style="CLEAR: both">
 </form>
-</div>
+</DIV>
 
-</body>
-</html>
+<script language="javascript" type="text/javascript">
+init();
+</script>
+</BODY>
+</HTML>

@@ -1,321 +1,392 @@
-var url = 'bwl.php';
+var bwl;
+var url;
 var page;
+var username;
 
-$(document).ready(function(){
-	if(IsLogin()){
-		$('#bwl_user').text('欢迎您 ' + $.cookie('uchome_loginuser'));
-		ShowBwl();	//显示界面
-	}
-	else{
-		ShowLogin('', '');
-	}
+//window.addEvent('domready', init);
 
-	$('#bwl_new').hide();
-
-	$('#bwl_form_new').bind('submit', function(){
-		$('#bwl_new').hide();
-		var form = $('#bwl_form_new');
-		var word = $('#bwl_form_new input[name=bwl_word]').val();
-		var comment = $('#bwl_form_new input[name=bwl_comment]').val();
-		AddWord(word, comment);
-		return false;
-	});
-	$('#bwl_add').bind('click', function(){ShowAddNew();});
-	$('#bwl_delete').bind('click', function(){DelRow();});
-	$('#bwl_download').bind('click', function(){DownloadText();});
-	$('#bwl_logout').bind('click', function(){UserLogout();});
-	
-	var word = window.decodeURIComponent(window.location.search.split('=')[1]);
-
-	if(word != 'undefined' && word != '')
+function isLogin()
+{
+	if(Cookie.read("uid"))
 	{
-		AddWord(word);	//添加生词
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+function init()
+{
+	bwl = $("bwl_tbl");
+	url = "bwl.php";
+	username = Cookie.read("uchome_loginuser");
+	
+	if(username)
+	{
+		$("bwl_user").set("text", "欢迎您 " + username);
 	}
 
-});
+	$('bwl_form_login').addEvent('submit', function(e){userLogin(e);});
+	$('bwl_form_new').addEvent('submit', function(e){addNew(e);});
+	$('bwl_add').addEvent('click', function(){showAddNew();});
+	$('bwl_delete').addEvent('click', function(){delRow();});
+	$('bwl_download').addEvent('click', function(){downloadText();});
+	$('bwl_logout').addEvent('click', function(){userLogout();});
 
-function IsLogin()
-{
-	return ($.cookie('uid')) ? true : false;
+	$("bwl_main").setStyle("display", "block");
+	$("bwl_new").setStyle("display", "none");
+	$("bwl_login").setStyle("display", "none");
+	
+	var word;
+	if(location.search.split("=").length < 2)
+	{
+		word = "";
+	}
+	else
+	{
+		word = decodeURIComponent(location.search.split("#")[0].split("=")[1]);
+	}
+
+	if(word != "")
+	{
+		addWord(word);	//添加生词
+	}
+	else
+	{
+		showBwl();	//显示界面
+	}
 }
 
-function UserLogout()
+function userLogin(e)
 {
-	var params = 'type=logout';
-	SendRequest(params);
-	$.removeCookie('uid');
-	$.removeCookie('uchome_loginuser');
-	//$.cookie('bwl_login', false);
-	//ShowLogin();
+	e.stop();	//防止刷新页面
+	var params = $("bwl_form_login").toQueryString();
+	$("bwl_main").setStyle("display", "block");
+	$("bwl_login").setStyle("display", "none");
+	$("bwl_user").set("text", "欢迎您 " + $("bwl_form_login").getElement("input[name=username]").get("value"));
+	sendRequest(params);
 }
 
-function ShowAddNew()
+function userLogout()
 {
-	$('#bwl_new').show();
+	var params = "type=logout";
+	sendRequest(params);
+	Cookie.write("uid", "-1", {domain:"", path:"/"});
+	Cookie.dispose("uchome_loginuser");
+	showLogin();
+	//window.location.href = "logout.htm";
 }
 
-function AddWord(word, comment)
+function addNew(e)
+{
+	e.stop();	//防止刷新页面
+	$("bwl_new").setStyle("display", "none");
+	var form = $("bwl_form_new");
+	var word = form.getElement("input[name=bwl_word]").get("value");
+	var comment = form.getElement("textarea[name=bwl_comment]").get("value");
+	addWord(word, comment);
+}
+
+function showAddNew()
+{
+	$("bwl_new").setStyle("display", "block");
+}
+
+function addWord(word, comment)
 {
 	if(comment == undefined)
 	{
-		comment = '';
+		comment = "";
 	}
 
-	if(IsLogin())	//用户已经登录
+	if(isLogin())	//用户已经登录
 	{
-		var params = 'word=' + word + '&comment=' + EncodeChar(comment) + '&type=insert';
-		SendRequest(params);
+		var params = "word=" + word + "&comment=" + encodeChar(comment) + "&type=insert";
+		sendRequest(params);
 	}
 	else
 	{
-		ShowLogin(word, comment);	//显示登录界面
+		showLogin(word, comment);	//显示登录界面
 	}
 }
 
-function ShowBwl(page)
+function showBwl(page)
 {
-		var username = $.cookie('uchome_loginuser');
-		if(username){
-			$('#bwl_user').text('欢迎您 ' + username);
-		}
-		var params = '';
-		if(page && page >= 1)
+	if(isLogin())	//用户已经登录
+	{
+		var params = "";
+		if(page >= 1)
 		{
-			params += 'page=' + page + '&';
+			params += "page=" + page + "&";
 		}
 
-		params += 'type=query';
-		SendRequest(params);
+		params += "type=query";
+		sendRequest(params);
+	}
+	else
+	{
+		showLogin("", "", page);
+	}
 }
 
-function SendRequest(params)
+function sendRequest(params)
 {
-	$.ajax({
-		type: 'POST',
-		url: url,
-		data: params,
-		success: function(txt){ShowPannel(txt);},
-		error: function(XMLHttpRequest){
-			$('#bwl_debug').html('The request failed.' + XMLHttpRequest.responseText);
+	var req = new Request
+	(
+		{
+			url: url,
+			onSuccess: function(txt){showPannel(txt);},
+			onFailure: function(txt){$('bwl_debug').set("html", 'The request failed.' + txt);}
 		}
-	});
+	);
+	req.send(params);
 }
 
-function ShowLogin(word, comment, page)
+function showLogin(word, comment, page)
 {
-	$('#bwl_main').hide();
-	$('#bwl_login').show();
+	$("bwl_main").setStyle("display", "none");
+	$("bwl_login").setStyle("display", "block");
 	
-	var form = $('#bwl_form_login');
-	if(typeof(word) != 'undefined')
+	var form = $("bwl_form_login");
+	if(typeof(word) != "undefined")
 	{
-		form.getElement('input[name=word]').set('value', word);
+		form.getElement("input[name=word]").set("value", word);
 	}
-	if(typeof(comment) != 'undefined')
+	if(typeof(comment) != "undefined")
 	{
-		form.getElement('input[name=comment]').set('value', comment);
+		form.getElement("input[name=comment]").set("value", comment);
 	}
-	if(typeof(page) != 'undefined')
+	if(typeof(page) != "undefined")
 	{
-		form.getElement('input[name=page]').set('value', page);
+		form.getElement("input[name=page]").set("value", page);
 	}
 }
 
-function ShowPannel(txt)
+function showPannel(txt)
 {
 	var row;
-	try
+	bwls = JSON.decode(txt, true);
+	if(bwls == null)	//错误处理
 	{
-		bwls = $.parseJSON(txt);
+		$('bwl_debug').set("html", txt);
 	}
-	catch(e)
-	{
-		//错误处理
-		$('#bwl_debug').html(txt);
-		return;
-	}
-	
-	if(bwls.status == 'OK')
+	else if(bwls.status == "OK")
 	{
 		if(bwls.data)
 		{
-			ClearTable();	//清空表格
+			clearTable();	//清空表格
 			for(var i = 0; i < bwls.data.length; i++)
 			{
 				row = bwls.data[i];
-				CreateRow(row.id, row.word, row.comment, row.adddate);	//插入行
+				createRow(row.id, row.word, row.comment, row.adddate);	//插入行
 			}
-			SetEvents();	//设置事件和CSS
-			SetPage(bwls.page, bwls.totalpage);	//设置页码
+			setEvents();	//设置事件和CSS
+			setPage(bwls.page, bwls.totalpage);	//设置页码
 			page = bwls.page;
 		}
-		$('#bwl_login').hide();
-		$('#bwl_main').show();
 	}
 	else
 	{
-		if(bwls.errormessage.indexOf('登录') >= 0)	//登录失败
+		if(bwls.errormessage.indexOf("登录") >= 0)	//登录失败
 		{
-			$('#bwl_main').hide();
-			$('#bwl_login').show();
+			$("bwl_main").setStyle("display", "none");
+			$("bwl_login").setStyle("display", "block");
 		}
 	}
-	$('#bwl_debug').html(bwls.errormessage);
+	$('bwl_debug').set("html", bwls.errormessage);
 }
 
-function ClearTable()
+function clearTable()
 {
-	$('#bwl_table').empty();
+	if(bwl)
+	{
+		bwl.getChildren().dispose();
+	}
 }
 
-function SetPage(page, totalpage)
+function setPage(page, totalpage)
 {
-	var div = $('#bwl_page');
-	var str = [];
+	var div = $("bwl_page");
+	var str = new Array;
 	for(var i = 1; i <= totalpage; i++)
 	{
 		if(page == i)
 		{
-			str.push('<span class="current">'+ i +'</span>');
+			str.push("<span class='current'>"+ i +"</span>");
 		}
 		else
 		{
-			str.push('<a href="#" onclick="ShowBwl(' + i + ')">' + i + '</a>');
+			str.push("<a href='#' onclick='showBwl(" + i + ")'>" + i + "</a>");
 		}
 	}
-	$('#bwl_page').html(str.join(' '));
+	div.set("html", str.join(" "));
 }
 
-function ShowCommentText(cell)	//显示文本框
+function showCommentText(cell)	//显示文本框
 {
 //debugger;
-	var text = cell.getElement('textarea');
-	var div = cell.getElement('div');
-	div.setStyle('display', 'none');
-	text.setStyle('display', 'block');
+	var text = cell.getElement("textarea");
+	var div = cell.getElement("div");
+	div.setStyle("display", "none");
+	text.setStyle("display", "block");
 	text.focus();
 }
 
-function SaveComment(cell)	//更新备注
+function saveComment(cell)	//更新备注
 {
-	var text = cell.getElement('textarea');
-	var div = cell.getElement('div');
-	var id = text.id.split('_')[2];
-	var comment = EncodeChar(encodeURIComponent(text.value));
-	var params = 'id=' + id + '&comment=' + comment + '&type=update';
-	var strDisplay = text.value.replace(/[\r\n]+/g, ' ');
-	if(strDisplay != '')
+	var text = cell.getElement("textarea");
+	var div = cell.getElement("div");
+	var id = text.id.split("_")[2];
+	var comment = encodeChar(encodeURIComponent(text.value));
+	var params = "id=" + id + "&comment=" + comment + "&type=update";
+	var strDisplay = text.value.replace(/[\r\n]+/g, " ");
+	if(strDisplay != "")
 	{
-		div.set('text', strDisplay.trim());
+		div.set("text", strDisplay.trim());
 	}
 	else
 	{
-		div.set('html', '点此输入备注');
+		div.set("html", "点此输入备注");
 	}
-	text.setStyle('display', 'none');
-	div.setStyle('display', 'block');
-	SendRequest(params);
+	text.setStyle("display", "none");
+	div.setStyle("display", "block");
+	sendRequest(params);
 }
 
 
 
-function CreateRow(id, word, comment, date)	//添加行
+function createRow(id, word, comment, date)	//添加行
 {
-	var strHTML = '<dl>';
-	strHTML += '<dd>';
-	strHTML += '  <span class="strong">·</span>';
-	strHTML += '  <div><h4>';
-	strHTML += '	<a href="http://www.zdic.net/search/?q=' + window.encodeURIComponent(word) + '" target="_blank">' + word + '</a>';
-	strHTML += '	<span>';
-	strHTML += date + '<input type="checkbox" id="bwl_chk_' + id + '" name="delete_list" />';
-	strHTML += '	</span>';
-	strHTML += '  </h4></div>';
-	strHTML += '  <div>';
-	strHTML += '    <div class="bz" id="bwl_text_' + id + '">' + comment + '</div>';
-	strHTML += '  </div>';
-	strHTML += '</dd>';
-	strHTML += '</dl>';
+	if(bwl)	//备忘录有效时
+	{
+		var dl = new Element("dl");
+		var dd = new Element("dd");
+		var strong = new Element("strong");
+		strong.set("html", "·");
 
-	$('#bwl_table').append(strHTML);
-}
+		var divContent = new Element("div");
+		var h4 = new Element("h4");
+		var a = new Element("a");
+		a.set("text", word);
+		
+		var span = new Element("span");
+		span.set("html", date);
+		var chk = new Element("input");
+		chk.set("type", "checkbox").set("id", "bwl_chk_" + id);
+		chk.set("type", "checkbox").set("name", "delete_list");
 
-function SetEvents()
-{
-	$('#bwl_table dl').hover(
-		function(){
-			$(this).addClass('over');
-		},
-		function(){
-			$(this).removeClass('over');
+		var divCommentGroup = new Element("div");
+		var divComment = new Element("div");
+		var strDisplay = comment.replace(/[\r\n]+/g, " ");
+		if(strDisplay != "")
+		{
+			divComment.set("text", strDisplay.trim());
 		}
-	);
+		else
+		{
+			divComment.set("html", "点此输入备注");
+		}
 
-	//正文区域
-	$('#bwl_table dl dd div div.bz').each(function(index){
-		$(this).click(function(){
-			//设置为可编辑
-			$(this).attr('contenteditable', 'true');
-			$(this).addClass('editable');
-		});
-		$(this).blur(function(){
-			//改为显示状态，并提交数据
-			$(this).attr('contenteditable', 'false');
-			$(this).removeClass('editable');
-		});
-	});
+		var text = new Element("textarea");
+		text.set("id", "bwl_text_" + id).set("value", comment);
+		
+		dd.inject(dl);	//将dd放入dl中
+		strong.inject(dd);
+		divContent.inject(dd);
+		h4.inject(divContent);
+		a.inject(h4);
+		span.inject(h4);
+		chk.inject(span);
+		divCommentGroup.inject(divContent);
+		divComment.inject(divCommentGroup);
+		text.inject(divCommentGroup);
+		
+		dl.inject(bwl);
+	}
 }
 
-function DelRow()	//删除行
+function setEvents()
+{
+	if(bwl && bwl.get("html") != "")
+	{
+		bwl.getElements("dl").each(
+			function(e, index)
+			{
+				e.addEvent("mouseover", function(){bwl.getElements("dl").removeClass("over");this.addClass("over")});
+				if(index == 0)
+				{
+					e.addClass("over");	//初始化，选中第一行
+				}
+				
+				var a = e.getElement("a");
+				a.set("href", "http://www.zdic.net/search/?q=" + encodeURIComponent(a.get("text")));
+				a.set("target", "_blank");
+				
+				var divCommentGroup = e.getElement("div").getElement("div");
+				var divComment = divCommentGroup.getElement("div");
+				divComment.addEvent("click", function(){showCommentText(divCommentGroup)});
+				divComment.addClass("bz");
+				
+				var text = divCommentGroup.getElement("textarea");
+				text.setStyle("display", "none");
+				text.addEvent("blur", function(){saveComment(divCommentGroup)});
+
+			}
+		);
+	}
+}
+
+function delRow()	//删除行
 {
 	var chks;
 	var id = new Array();
 	var params;
-	chks = bwl.getElements('input[checked]').get('id');
+	chks = bwl.getElements("input[checked]").get("id");
 	for(var i = 0; i < chks.length; i++)
 	{
-		id.push(chks[i].split('_')[2]);
+		id.push(chks[i].split("_")[2]);
 	}
 	if(page > 0)
 	{
-		params = 'id=' + id.join('|') + '&page=' + page + '&type=delete';
+		params = "id=" + id.join("|") + "&page=" + page + "&type=delete";
 	}
 	else
 	{
-		params = 'id=' + id.join('|') + '&page=1&type=delete';
+		params = "id=" + id.join("|") + "&page=1&type=delete";
 	}
 
-	SendRequest(params);
+	sendRequest(params);
 }
 
-function Test()
+function test()
 {
-	$('#bwl_main').setStyle('display', 'block');
-	$('#bwl_new').setStyle('display', 'block');
-	$('#bwl_login').setStyle('display', 'block');
+	$("bwl_main").setStyle("display", "block");
+	$("bwl_new").setStyle("display", "block");
+	$("bwl_login").setStyle("display", "block");
 }
 
-function EncodeChar(str)
+function encodeChar(str)
 {
-	return str.replace(/'/g, '""');
+	return str.replace(/'/g, "''");
 }
 
-function SelectAllList()
+function selectAllList()
 {
-	bwl.getElements('input').each
+	bwl.getElements("input").each
 	(
 		function(e, index)
 		{
-			if (e.name == 'delete_list')
+			if (e.name == "delete_list")
             {
-				e.checked = $('#control_all').checked;
+				e.checked = $('control_all').checked;
             }
         }
 	);
 }
 
-function DownloadText()
+function downloadText()
 {
-	window.location.href = 'download.php';
+	window.location.href = "download.php";
 }
-
-//javascript:void((function(){UserLogout()})())

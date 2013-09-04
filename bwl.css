@@ -1,355 +1,73 @@
-*
-{
-  font:normal 12px 宋体;
-  margin:0;
-  padding:0;
+*{ margin:0; padding:0; font:normal 12px 宋体;}
+.wrapper{ position:absolute; width:100%; background:#fff; padding:5px;}
+			
+/*平常的状态*/
+dl{ clear:both; margin:0;padding:5px 0 0 0;height:16px;border-bottom:#705a5b 1px dotted;}
+	dl dd{}
+		dl dd strong{ float:left; margin-right:5px;padding:0;}
+		dl dd div{ float:left; width:85%; list-style-type:none;line-height:16px;}
+			dl dd div h4{ clear:both; font-weight:normal}
+				dl dd div h4 a{ float:left; color:#000000; font-size:12px; font-weight:normal; text-decoration:none;}
+				dl dd div h4 a:hover{ color:#f00; text-decoration:underline;}
+				dl dd div h4 span{ float:right; width:80px;}
+			dl dd div div {display:none;}
+			dl dd div div div {display:none;}
+			            
+				
+/*鼠标划过的状态*/				
+dl.over{ clear:both; height:55px; background:#e1d6d0; padding:5px;border-bottom:#705a5b 1px dotted;}
+	dl.over dd{}
+		dl.over dd strong{ float:left;font-size:14px; color:#de520d; vertical-align:top;font-weight:bold;}
+		dl.over dd div{ float:left; width:85%; list-style-type:none;}
+			dl.over dd div h4{ clear:both; font-weight:normal}
+				dl.over dd div h4 a{ float:left; color:#5b2a1c; font-size:12px; font-weight:bold; text-decoration:none;}
+				dl.over dd div h4 a:hover{ color:#f00; text-decoration:underline;}
+				dl.over dd div h4 span{ float:right;}
+				dl.over dd div div {clear:both; display:block;text-align:left;}
+				dl.over dd div div div {clear:both; display:block;text-align:left;}
+				dl.over dd div div TEXTAREA {clear:both; display:block;text-align:left;width:100%;height:40px;max-width:300px;}
+
+
+#bwl_add {display:none;}
+#bwl_main {
+text-align:center;
+padding:5px;
+}
+#bwl_user{
+text-align:left;
+padding:0px 0px 0px 20px;
+}
+#bwl_debug {
+text-align:center;
+color:#5b2a1c;
+font-size:14px;
+font-weight:bold;
 }
 
-.wrapper
-{
-  position:absolute;
-  width:100%;
-  background:#fff;
-  padding:5px;
+#bwl_tools {
+text-align:right;
+padding:0px 5px 0px 0px;
 }
 
-dl
-{
-  clear:both;
-  height:16px;
-  border-bottom:#705a5b 1px dotted;
-  margin:0;
-  padding:5px 0 0;
+/*分页样式*/
+#bwl_page {
+	PADDING-RIGHT: 3px; PADDING-LEFT: 3px; PADDING-BOTTOM: 3px; MARGIN: 3px; PADDING-TOP: 3px; TEXT-ALIGN: center
+}
+#bwl_page A {
+	BORDER-RIGHT: #c5af90 1px solid; PADDING-RIGHT: 5px; BORDER-TOP: #c5af90 1px solid; PADDING-LEFT: 5px; PADDING-BOTTOM: 2px; BORDER-LEFT: #c5af90 1px solid; COLOR: #666666; MARGIN-RIGHT: 2px; PADDING-TOP: 2px; BORDER-BOTTOM: #c5af90 1px solid; TEXT-DECORATION: none;BACKGROUND-COLOR: #dac9b6;
+}
+#bwl_page A:hover {
+	BORDER-RIGHT: #5b2b1d 1px solid; BORDER-TOP: #5b2b1d 1px solid; BORDER-LEFT: #5b2b1d 1px solid; COLOR: #000; BORDER-BOTTOM: #5b2b1d 1px solid; BACKGROUND-COLOR: lightyellow
+}
+#bwl_page A:active {
+	BORDER-RIGHT: #5b2b1d 1px solid; BORDER-TOP: #5b2b1d 1px solid; BORDER-LEFT: #5b2b1d 1px solid; COLOR: #000; BORDER-BOTTOM: #5b2b1d 1px solid; BACKGROUND-COLOR: lightyellow
+}
+#bwl_page SPAN.current {
+	BORDER-RIGHT: #5a2a1c 1px solid; PADDING-RIGHT: 5px; BORDER-TOP: #5a2a1c 1px solid; PADDING-LEFT: 5px; FONT-WEIGHT: bold; PADDING-BOTTOM: 2px; BORDER-LEFT: #5a2a1c 1px solid; COLOR: #000000; MARGIN-RIGHT: 2px; PADDING-TOP: 2px; BORDER-BOTTOM: #5a2a1c 1px solid; BACKGROUND-COLOR: #a37c62
+}
+#bwl_page SPAN.disabled {
+	BORDER-RIGHT: #929292 1px solid; PADDING-RIGHT: 5px; BORDER-TOP: #929292 1px solid; PADDING-LEFT: 5px; PADDING-BOTTOM: 2px; BORDER-LEFT: #929292 1px solid; COLOR: #929292; MARGIN-RIGHT: 2px; PADDING-TOP: 2px; BORDER-BOTTOM: #929292 1px solid
 }
 
-dl dd span
-{
-  float:left;
-  margin-right:5px;
-  padding:0;
-}
-
-dl dd div
-{
-  float:left;
-  width:85%;
-  list-style-type:none;
-  line-height:16px;
-}
-
-dl dd div h4 a
-{
-  float:left;
-  color:#000;
-  font-size:12px;
-  font-weight:400;
-  text-decoration:none;
-}
-
-dl dd div h4 span
-{
-  float:right;
-  width:80px;
-}
-
-dl.over
-{
-  clear:both;
-  height:55px;
-  background:#e1d6d0;
-  border-bottom:#705a5b 1px dotted;
-  padding:5px;
-}
-
-dl.over dd span
-{
-  float:left;
-  font-size:14px;
-  color:#de520d;
-  vertical-align:top;
-  font-weight:700;
-}
-
-dl.over dd div
-{
-  float:left;
-  width:85%;
-  list-style-type:none;
-}
-
-dl.over dd div h4 a
-{
-  float:left;
-  color:#5b2a1c;
-  font-size:12px;
-  font-weight:700;
-  text-decoration:none;
-}
-
-dl.over dd div h4 span
-{
-  float:right;
-}
-
-dl.over dd div div
-{
-  clear:both;
-  display:block;
-  text-align:left;
-  width:100%;
-  height:100%;
-}
-
-.editable
-{
-  border-style:inset;
-}
-
-.diseditable
-{
-  border-style:solid;
-}
-
-#bwl_main
-{
-  text-align:center;
-  display:none;
-  padding:5px;
-}
-
-#bwl_user
-{
-  text-align:left;
-  padding:0 0 0 20px;
-}
-
-#bwl_debug
-{
-  text-align:center;
-  color:#5b2a1c;
-  font-size:14px;
-  font-weight:700;
-}
-
-#bwl_tools
-{
-  text-align:right;
-  padding:0 5px 0 0;
-}
-
-#bwl_page
-{
-  text-align:center;
-  margin:3px;
-  padding:3px;
-}
-
-#bwl_page a
-{
-  border-right:#c5af90 1px solid;
-  border-top:#c5af90 1px solid;
-  border-left:#c5af90 1px solid;
-  color:#666;
-  margin-right:2px;
-  border-bottom:#c5af90 1px solid;
-  text-decoration:none;
-  background-color:#dac9b6;
-  padding:2px 5px;
-}
-
-#bwl_page span.current
-{
-  border-right:#5a2a1c 1px solid;
-  border-top:#5a2a1c 1px solid;
-  font-weight:700;
-  border-left:#5a2a1c 1px solid;
-  color:#000;
-  margin-right:2px;
-  border-bottom:#5a2a1c 1px solid;
-  background-color:#a37c62;
-  padding:2px 5px;
-}
-
-#bwl_page span.disabled
-{
-  border-right:#929292 1px solid;
-  border-top:#929292 1px solid;
-  border-left:#929292 1px solid;
-  color:#929292;
-  margin-right:2px;
-  border-bottom:#929292 1px solid;
-  padding:2px 5px;
-}
-
-#bwl_cr, #bwl_cr a
-{
-  color:#a99d94;
-  font-size:11px;
-}
-
-#bwl_login
-{
-  position:absolute;
-  top:8px;
-  left:50%;
-  margin-top:8px;
-  margin-left:-110px;
-  border-right:#b6a392 3px solid;
-  border-top:#b6a392 3px solid;
-  border-left:#b6a392 3px solid;
-  width:220px;
-  height:174px;
-  border-bottom:#b6a392 3px solid;
-  text-align:left;
-  background:#e2d4c1;
-  display:none;
-}
-
-#bwl_login #Heading
-{
-  font-weight:700;
-  font-size:100%;
-  color:#5b2a1c;
-  font-family:arial;
-  margin:0;
-  padding:10px 0 5px 10px;
-}
-
-#bwl_login #Heading form
-{
-  margin:0;
-  padding:0;
-}
-
-#bwl_login #Heading H2
-{
-  font-weight:700;
-  font-size:105%;
-  text-transform:uppercase;
-  color:#999;
-  border-bottom:#ddd 1px solid;
-  font-family:"trebuchet ms" , lucida grande , verdana, arial, sans-serif;
-  margin:0 0 8px;
-  padding:0;
-}
-
-#bwl_login #Heading p
-{
-  margin:0;
-  padding:6px 0;
-}
-
-#bwl_login #Heading a:hover
-{
-  font-size:12px;
-  color:#5b2a1c;
-  background-color:#f5f5f5;
-  text-decoration:underline;
-}
-
-.MyLabel
-{
-  display:block;
-  font-weight:700;
-  font-size:12px;
-  text-transform:uppercase;
-  color:#999;
-  margin:3px 0 2px;
-}
-
-#bwl_login #Heading input.Textbox
-{
-  padding-right:2px;
-  padding-left:2px;
-  width:80%;
-  height:16px;
-  font-size:14px;
-}
-
-#bwl_login #Heading a.Button:link
-{
-  border-right:#999 1px solid;
-  border-top:#999 1px solid;
-  display:block;
-  font-weight:700;
-  font-size:15px;
-  background:#904;
-  border-left:#999 1px solid;
-  width:50px;
-  color:#fff;
-  border-bottom:#999 1px solid;
-  font-family:Verdana;
-  padding:5px 12px 3px 20px;
-}
-
-#bwl_login #Heading a.Button:visited
-{
-  border-right:#999 1px solid;
-  border-top:#999 1px solid;
-  display:block;
-  font-weight:700;
-  font-size:15px;
-  background:#904;
-  border-left:#999 1px solid;
-  width:60px;
-  color:#fff;
-  border-bottom:#999 1px solid;
-  padding:3px 12px;
-}
-
-#bwl_login #Heading div
-{
-  margin-top:5px;
-  font-size:85%;
-}
-
-#bwl_login #Heading p.Small
-{
-  margin-top:12px;
-  font-size:85%;
-}
-
-#bwl_login #Heading .Button
-{
-  margin-top:5px;
-  font-weight:700;
-  font-size:14px;
-  padding-bottom:3px;
-  width:100px;
-  color:#6d1307;
-  padding-top:3px;
-  font-family:Verdana;
-}
-
-#bwl_login #Heading a:link, #bwl_login #Heading a:visited
-{
-  font-size:12px;
-  color:#444;
-}
-
-dl dd div h4,dl.over dd div h4
-{
-  clear:both;
-  font-weight:400;
-}
-
-dl dd div h4 a:hover,dl.over dd div h4 a:hover
-{
-  color:red;
-  text-decoration:underline;
-}
-
-dl dd div div,dl dd div div div,#bwl_add
-{
-  display:none;
-}
-
-#bwl_page a:hover,#bwl_page a:active
-{
-  border-right:#5b2b1d 1px solid;
-  border-top:#5b2b1d 1px solid;
-  border-left:#5b2b1d 1px solid;
-  color:#000;
-  border-bottom:#5b2b1d 1px solid;
-  background-color:#FFFFE0;
-}
+#bwl_cr,#bwl_cr a{
+color:#a99d94;font-size:11px;}
