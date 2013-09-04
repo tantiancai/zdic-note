@@ -6,7 +6,7 @@ require_once '../config/config_ucenter.php';
 require_once '../uc_client/client.php';
 
 //获取用户登录信息
-if(!empty($_COOKIE['auth']))
+if(!empty($_COOKIE[$config['cookiepre'].'auth']))
 {
 	list( , , $uid) = explode("\t", uc_authcode($_COOKIE[$config['cookiepre'].'auth'], 'DECODE'));
 }
@@ -86,6 +86,9 @@ function main()
 				sqlDelete();	//删除
 				$msg->data = sqlQuery();		//查询
 				break;
+			default:
+				$err = 'type错误：'.$GLOBALS['type'];
+				break;
 		}
 	}
 	catch(Exception $e)
@@ -141,8 +144,8 @@ function logout()
 function getTotalPage($uid)
 {
 	$db = $GLOBALS['db'];
-	$result = $db->query("SELECT count(*) FROM zdic_bwl WHERE userid = '$uid'");
-	$row = $db->num_rows;
+	$result = $db->query("SELECT count(*) AS rows FROM zdic_bwl WHERE userid = '$uid'");
+	$row = $result[0]->rows;
 	return ceil($row / $GLOBALS['rows']);
 }
 
