@@ -89,6 +89,7 @@ function main()
 				break;
 			default:
 				$err = 'type错误：'.$GLOBALS['type'];
+				break;
 		}
 	}
 	catch(Exception $e)
