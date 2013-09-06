@@ -107,15 +107,15 @@ function ShowLogin(word, comment, page)
 	$('#bwl_login').show();
 	
 	var form = $('#bwl_form_login');
-	if(typeof(word) != 'undefined')
+	if(typeof word != 'undefined')
 	{
 		form.getElement('input[name=word]').set('value', word);
 	}
-	if(typeof(comment) != 'undefined')
+	if(typeof comment != 'undefined')
 	{
 		form.getElement('input[name=comment]').set('value', comment);
 	}
-	if(typeof(page) != 'undefined')
+	if(typeof page != 'undefined')
 	{
 		form.getElement('input[name=page]').set('value', page);
 	}
